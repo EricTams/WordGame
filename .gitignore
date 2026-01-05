@@ -19,8 +19,7 @@ Thumbs.db
 *api_key*.txt
 
 # Imagine tool cache
-Imagine/__pycache__/
-Imagine/assets/
+Imagine/
 
 # Temporary files
 *.tmp
