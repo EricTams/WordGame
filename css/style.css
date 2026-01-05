@@ -1,0 +1,811 @@
+/* Word Battle - Cozy/Warm Theme */
+
+/* ============================================
+   CSS Variables - Color Palette
+   ============================================ */
+:root {
+    /* Primary colors - warm and cozy */
+    --color-cream: #FFF8E7;
+    --color-cream-dark: #F5EBD6;
+    --color-brown: #8B7355;
+    --color-brown-dark: #6B5344;
+    --color-brown-light: #A89078;
+    
+    /* Accent colors */
+    --color-amber: #FFB347;
+    --color-amber-dark: #E89B30;
+    --color-green: #7D9B76;
+    --color-green-dark: #5E7A58;
+    --color-green-light: #9DBB96;
+    
+    /* UI colors */
+    --color-red: #D4726A;
+    --color-red-dark: #B85A52;
+    --color-blue: #6A8FD4;
+    --color-gold: #FFD700;
+    
+    /* Text colors */
+    --color-text: #4A3F35;
+    --color-text-light: #7A6F65;
+    --color-text-white: #FFF8E7;
+    
+    /* Shadows and effects */
+    --shadow-soft: 0 4px 12px rgba(75, 60, 45, 0.15);
+    --shadow-medium: 0 6px 20px rgba(75, 60, 45, 0.2);
+    --shadow-hard: 0 8px 30px rgba(75, 60, 45, 0.3);
+    
+    /* Border radius */
+    --radius-small: 8px;
+    --radius-medium: 12px;
+    --radius-large: 16px;
+    --radius-round: 50%;
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Typography */
+    --font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-size-sm: 14px;
+    --font-size-md: 16px;
+    --font-size-lg: 20px;
+    --font-size-xl: 28px;
+    --font-size-xxl: 36px;
+    
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-medium: 250ms ease;
+    --transition-slow: 400ms ease;
+}
+
+/* ============================================
+   Reset and Base Styles
+   ============================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ============================================
+   HTML Tile Layer
+   ============================================ */
+#tile-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+}
+
+.rack-container {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    pointer-events: auto;
+}
+
+.lane-tiles {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.html-tile {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family);
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--color-text);
+    border-radius: 6px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+}
+
+.html-tile.main {
+    background: linear-gradient(145deg, #E8C9A0, #D4A574);
+    border: 3px solid #B8956A;
+    box-shadow: 
+        0 3px 0 #9A7B55,
+        0 4px 8px rgba(0,0,0,0.2);
+}
+
+.html-tile.steel {
+    background: linear-gradient(145deg, #B8C8D8, #8AA8C8);
+    border: 3px solid #7090B0;
+    box-shadow: 
+        0 3px 0 #607890,
+        0 4px 8px rgba(0,0,0,0.2);
+    color: #405060;
+}
+
+.html-tile.ice {
+    background: linear-gradient(145deg, #D0F0FF, #A8D4E6);
+    border: 3px solid #80B8D0;
+    box-shadow: 
+        0 3px 0 #6098B0,
+        0 4px 8px rgba(0,0,0,0.2);
+}
+
+.html-tile.flower {
+    background: linear-gradient(145deg, #D8F0D0, #B8D4A8);
+    border: 3px solid #90B080;
+    box-shadow: 
+        0 3px 0 #709060,
+        0 4px 8px rgba(0,0,0,0.2);
+}
+
+.html-tile.gold {
+    background: linear-gradient(145deg, #FFE878, #FFD700);
+    border: 3px solid #D4B000;
+    box-shadow: 
+        0 3px 0 #B09000,
+        0 4px 8px rgba(0,0,0,0.2);
+}
+
+.html-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 5px 0 #9A7B55,
+        0 8px 16px rgba(0,0,0,0.3);
+}
+
+.html-tile.dragging {
+    cursor: grabbing;
+    transform: scale(1.1);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.html-tile.in-lane {
+    cursor: default;
+}
+
+#dragged-tile {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+#dragged-tile .html-tile {
+    transform: scale(1.1);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font-family);
+    font-size: var(--font-size-md);
+    color: var(--color-text);
+    background: var(--color-brown-dark);
+}
+
+/* ============================================
+   Game Container
+   ============================================ */
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-cream-dark) 100%);
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ============================================
+   UI Layer (overlays canvas)
+   ============================================ */
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+}
+
+#ui-layer > * {
+    pointer-events: auto;
+}
+
+/* ============================================
+   Top Bar
+   ============================================ */
+#top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#gold-display {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: linear-gradient(135deg, var(--color-amber) 0%, var(--color-amber-dark) 100%);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-soft);
+    font-weight: 700;
+    color: var(--color-brown-dark);
+}
+
+#gold-icon {
+    font-size: var(--font-size-lg);
+}
+
+#gold-amount {
+    font-size: var(--font-size-lg);
+    min-width: 40px;
+    text-align: right;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.ui-button {
+    font-family: var(--font-family);
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: linear-gradient(180deg, var(--color-brown-light) 0%, var(--color-brown) 100%);
+    color: var(--color-text-white);
+    box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ui-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: linear-gradient(180deg, var(--color-brown) 0%, var(--color-brown-dark) 100%);
+}
+
+.ui-button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-soft);
+}
+
+.ui-button.primary {
+    background: linear-gradient(180deg, var(--color-green-light) 0%, var(--color-green) 100%);
+}
+
+.ui-button.primary:hover {
+    background: linear-gradient(180deg, var(--color-green) 0%, var(--color-green-dark) 100%);
+}
+
+.ui-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.ui-button:disabled:hover {
+    transform: none;
+    box-shadow: var(--shadow-soft);
+}
+
+/* ============================================
+   Health Bars - Player left, Enemy right
+   ============================================ */
+.health-bar-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    pointer-events: none;
+}
+
+.health-bar-container.left {
+    top: var(--spacing-lg);
+    left: 120px; /* Right of menu button */
+    align-items: flex-start;
+}
+
+.health-bar-container.right {
+    top: var(--spacing-lg);
+    right: 120px; /* Left of gold display */
+    align-items: flex-end;
+}
+
+.health-bar-label {
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.health-bar {
+    position: relative;
+    width: 180px;
+    height: 24px;
+    background: var(--color-brown-dark);
+    border-radius: var(--radius-large);
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.health-bar-fill {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    bottom: 2px;
+    width: calc(100% - 4px);
+    border-radius: var(--radius-medium);
+    transition: width var(--transition-medium);
+}
+
+.health-bar-fill.player {
+    background: linear-gradient(180deg, var(--color-green-light) 0%, var(--color-green) 100%);
+}
+
+.health-bar-fill.enemy {
+    background: linear-gradient(180deg, var(--color-red) 0%, var(--color-red-dark) 100%);
+}
+
+.health-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-white);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================
+   Action Bar (bottom)
+   ============================================ */
+#action-bar {
+    position: absolute;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    z-index: 20;
+}
+
+/* ============================================
+   Modal Screens
+   ============================================ */
+.modal-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(75, 60, 45, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn var(--transition-medium);
+}
+
+.modal-screen.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: linear-gradient(180deg, var(--color-cream) 0%, var(--color-cream-dark) 100%);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-hard);
+    text-align: center;
+    min-width: 300px;
+    max-width: 90vw;
+    animation: slideUp var(--transition-medium);
+}
+
+.modal-content.wide {
+    min-width: 600px;
+    max-width: 900px;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content h2 {
+    font-size: var(--font-size-xl);
+    color: var(--color-brown-dark);
+    margin-bottom: var(--spacing-lg);
+}
+
+.modal-content .ui-button {
+    display: block;
+    width: 100%;
+    margin-top: var(--spacing-md);
+}
+
+.modal-content .ui-button:first-of-type {
+    margin-top: var(--spacing-lg);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.modal-buttons .ui-button {
+    flex: 1;
+    margin-top: 0;
+}
+
+/* ============================================
+   Selection Grid (enemies, relics)
+   ============================================ */
+.selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.selection-card {
+    background: var(--color-cream);
+    border: 3px solid var(--color-brown-light);
+    border-radius: var(--radius-medium);
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.selection-card:hover {
+    border-color: var(--color-amber);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-medium);
+}
+
+.selection-card.selected {
+    border-color: var(--color-green);
+    background: var(--color-green-light);
+}
+
+.selection-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: var(--spacing-sm);
+}
+
+.selection-card h3 {
+    font-size: var(--font-size-md);
+    color: var(--color-brown-dark);
+    margin-bottom: var(--spacing-xs);
+}
+
+.selection-card p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+}
+
+/* ============================================
+   Tile Selection (mulligan)
+   ============================================ */
+.tile-selection {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin: var(--spacing-lg) 0;
+}
+
+.tile-select-item {
+    width: 64px;
+    height: 64px;
+    border: 3px solid var(--color-brown-light);
+    border-radius: var(--radius-small);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.tile-select-item:hover {
+    border-color: var(--color-amber);
+    transform: translateY(-4px);
+}
+
+.tile-select-item.selected {
+    border-color: var(--color-green);
+    transform: translateY(-8px);
+}
+
+.tile-select-item.selected::after {
+    content: '✓';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: var(--color-green);
+    border-radius: var(--radius-round);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+/* ============================================
+   Turn Indicator
+   ============================================ */
+#turn-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, var(--color-amber) 0%, var(--color-amber-dark) 100%);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-hard);
+    z-index: 50;
+    animation: turnPop 0.5s ease;
+}
+
+#turn-indicator.hidden {
+    display: none;
+}
+
+@keyframes turnPop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+#turn-text {
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    color: var(--color-brown-dark);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* ============================================
+   Loading Screen
+   ============================================ */
+#loading-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--color-brown) 0%, var(--color-brown-dark) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+#loading-screen.hidden {
+    display: none;
+}
+
+.loading-content {
+    text-align: center;
+    color: var(--color-cream);
+}
+
+.loading-content h1 {
+    font-size: var(--font-size-xxl);
+    margin-bottom: var(--spacing-lg);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.loading-bar {
+    width: 300px;
+    height: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-large);
+    overflow: hidden;
+    margin: 0 auto var(--spacing-md);
+}
+
+.loading-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-amber) 0%, var(--color-amber-dark) 100%);
+    border-radius: var(--radius-large);
+    transition: width var(--transition-medium);
+}
+
+#loading-status {
+    font-size: var(--font-size-sm);
+    opacity: 0.8;
+}
+
+/* ============================================
+   Reward Display
+   ============================================ */
+#reward-display {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    background: var(--color-cream-dark);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-medium);
+}
+
+.reward-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.reward-item-info {
+    text-align: left;
+}
+
+.reward-item-name {
+    font-weight: 700;
+    color: var(--color-brown-dark);
+}
+
+.reward-item-desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+.hidden {
+    display: none !important;
+}
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+    :root {
+        --font-size-sm: 12px;
+        --font-size-md: 14px;
+        --font-size-lg: 18px;
+        --font-size-xl: 24px;
+        --font-size-xxl: 30px;
+        --spacing-md: 12px;
+        --spacing-lg: 16px;
+        --spacing-xl: 24px;
+    }
+    
+    .modal-content.wide {
+        min-width: auto;
+        width: 95vw;
+    }
+    
+    .health-bar {
+        width: 140px;
+    }
+    
+    #health-bars {
+        gap: var(--spacing-md);
+    }
+    
+    #action-bar {
+        flex-wrap: wrap;
+    }
+    
+    .selection-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ============================================
+   Active Relics Display (inside player health container)
+   ============================================ */
+.active-relics {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    pointer-events: auto;
+}
+
+.active-relic {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-small);
+    background: var(--color-cream);
+    box-shadow: var(--shadow-soft);
+    border: 2px solid var(--color-brown);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.active-relic:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-medium);
+}
+
+.active-relic img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.weakness-hint {
+    max-width: 180px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--color-red);
+    color: var(--color-text-white);
+    border-radius: var(--radius-small);
+    font-size: var(--font-size-xs);
+    text-align: left;
+    margin-top: var(--spacing-xs);
+}
+
+.weakness-hint small {
+    line-height: 1.3;
+}
+

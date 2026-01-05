@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# IDE
+.cursor/
+.vscode/
+*.swp
+*.swo
+
+# OS
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# API keys (important - never commit these!)
+*api_key*.txt
+
+# Imagine tool cache
+Imagine/__pycache__/
+Imagine/assets/
+
+# Temporary files
+*.tmp
+*.log

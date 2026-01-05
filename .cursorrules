@@ -1,0 +1,221 @@
+# Cursor Rules for Word Battle - Turn-Based Word Game
+# HTML5 game for web browsers, targeting GitHub Pages deployment
+
+## Project Context
+- HTML5 word battle game for web browsers
+- Target deployment: GitHub Pages
+- Development environment: Windows with Cursor IDE
+- Game type: Turn-based word game with lane combat, relics, and AI opponents
+- Player forms words from letter tiles to deal damage to enemies
+- Features: Lane-based combat, relic system, powered tiles, enemy weaknesses
+
+## 1. MUST Requirements
+
+### 1.1 Simplicity and Clarity
+MUST keep functions under 30 lines whenever possible
+MUST use vanilla JavaScript - no frameworks (React, Vue, etc.)
+MUST make game logic obvious with clear names and consistent patterns
+MUST start with the simplest working implementation
+MUST use Canvas2D for sprite rendering (not WebGL)
+
+### 1.2 Explicit Design
+MUST pass all dependencies explicitly as parameters
+MUST make all game configuration values in config.js
+MUST name all magic numbers (TILE_SIZE not 96, RACK_CAPACITY not 7)
+MUST return early to flatten logic and avoid deep nesting
+MUST define variables as close to their use as possible
+
+### 1.3 Separation of Concerns
+MUST keep DOM UI and canvas rendering completely separate
+MUST separate game logic from rendering logic
+MUST separate input handling from game state changes
+MUST use separate files for separate concerns (entities/, systems/, ui/)
+MUST keep each file under 500 lines (hard limit 1000)
+
+### 1.4 Failure Handling
+MUST crash with clear error message when sprites fail to load
+MUST validate dictionary loaded before allowing gameplay
+MUST show user-friendly error messages for missing assets
+
+### 1.5 Data and State Management
+MUST use real game state only - no mock data
+MUST implement features only when needed (YAGNI)
+MUST delete unused code immediately
+MUST use immutable configurations once loaded
+
+### 1.6 Development Process
+MUST test the game in browser after making changes
+MUST validate HTML/CSS/JS syntax after changes
+MUST ensure game works on GitHub Pages deployment
+
+### 1.7 HTML5 Game Specific
+MUST use semantic HTML structure
+MUST implement proper game loop with requestAnimationFrame
+MUST handle window resize events properly
+MUST use relative paths for assets (GitHub Pages compatibility)
+MUST implement proper keyboard/mouse input handling
+MUST use CSS for UI styling, canvas for game rendering
+MUST use JavaScript files (.js) for configuration data, NOT JSON files
+MUST avoid fetch() for local config files (CORS blocks file:// protocol)
+MUST ensure game works when opened directly from file system
+
+## 2. NEVER Requirements
+
+### 2.1 Complexity and Abstractions
+NEVER implement anything until it's actually needed (YAGNI)
+NEVER add game engine abstractions until you have 3+ real use cases
+NEVER implement features "for later"
+NEVER add unused parameters, methods, or game objects
+
+### 2.2 Hardcoded Values
+NEVER hardcode default values in constructors
+NEVER use magic numbers for tile sizes, spacing, or game balance
+NEVER hardcode fallback values for game state
+
+### 2.3 Bad Practices
+NEVER maintain legacy codepaths
+NEVER keep code that isn't actively being used
+NEVER mock game state data
+NEVER reach into global variables instead of explicit parameters
+NEVER commit API keys or secrets
+NEVER use inline styles or scripts in HTML
+
+### 2.4 HTML5 Game Specific
+NEVER use global variables for game state (use modules)
+NEVER use setTimeout/setInterval for game loops
+NEVER hardcode absolute paths for assets
+NEVER use fetch() for loading local config/data files
+NEVER create JSON config files that require fetch
+
+## 3. File Organization
+```
+index.html                 - Main game page (canvas + UI containers)
+css/
+  style.css                - Cozy/warm themed styling with CSS variables
+
+src/
+  game.js                  - Core game controller, state machine
+  game_loop.js             - requestAnimationFrame loop management
+  input.js                 - Keyboard/mouse/touch input handling
+  config.js                - Game configuration constants
+  
+  entities/
+    tile.js                - Letter tile with type (main, steel, ice, flower, gold)
+    rack.js                - Player's 7-tile hand with drag/drop
+    lane.js                - Word lane with ownership and damage
+    enemy.js               - Enemy definitions with health/weaknesses
+    
+  systems/
+    tile_set.js            - Scrabble distribution, powered tile tracking
+    dictionary.js          - Word validation from CSV data
+    relics.js              - Relic definitions and effect system
+    ai.js                  - AI word-finding and turn logic
+    animation.js           - Tween and animation system
+    audio.js               - Sound effects and music
+    
+  ui/
+    board_ui.js            - Main game board rendering
+    menu.js                - Pause/settings menu
+    enemy_select.js        - Enemy selection screen
+    relic_select.js        - Relic reward selection
+    reward_screen.js       - Victory rewards display
+    health_bar.js          - Animated health bars
+    
+  data/
+    dictionary_data.js     - Word list as JS module (from CSV)
+    enemy_data.js          - Enemy stats and weakness definitions
+    relic_data.js          - Relic definitions and effects
+
+Images/                    - Sprite assets (existing)
+  Backgrounds/
+  Enemies/
+  Lane Tileset/
+  Relics/
+  Tiles/
+
+sound/                     - Sound effects (existing)
+music/                     - Background music (existing)
+dict_input/                - Source dictionary CSV
+
+Imagine/                   - AI asset generation tool (existing)
+```
+
+## 4. Visual Style: Cozy/Warm
+- **Color Palette**: Warm browns (#8B7355), soft greens (#7D9B76), cream (#FFF8E7), amber (#FFB347)
+- **Typography**: Nunito or Quicksand - rounded, friendly fonts
+- **UI Elements**: Rounded corners (12-16px), soft shadows, subtle gradients
+- **Tiles**: Use existing sprite sheets from Images/ folder
+- **Buttons/Panels**: CSS-only with hover states, no bitmap UI
+- **Animations**: Smooth easing, bounce effects for feedback
+
+## 5. GitHub Pages Considerations
+- Use relative paths for all assets
+- Ensure game works without server-side processing
+- Test game in incognito mode to verify no local dependencies
+- Use HTTPS-compatible APIs only
+- Dictionary data embedded in JS (no fetch needed)
+- Keep total asset size reasonable for web delivery
+
+## 6. Windows/Cursor Specific
+- Use forward slashes in paths for cross-platform compatibility
+- Test game in multiple browsers (Chrome, Firefox, Edge)
+- MUST use PowerShell syntax for terminal commands (NOT bash)
+- NEVER use `&&` for command chaining (PowerShell uses `;`)
+- Use PowerShell-native commands when appropriate
+
+## 6.1 Testing the Game in Browser
+
+### Starting a Local Web Server
+```powershell
+python -m http.server 8080
+```
+Navigate to: `http://localhost:8080`
+
+### Browser Caching Issues
+After code changes:
+1. Hard refresh: Ctrl+Shift+R
+2. Or add cache-busting query param: `http://localhost:8080?v=2`
+
+### In-Game Controls
+| Keys | Action |
+|------|--------|
+| **Mouse Drag** | Pick up and place tiles |
+| **Click** | Select options, buttons |
+| **Escape** | Open menu, cancel |
+
+## 7. Game Mechanics Reference
+
+### Core Loop
+1. Player draws tiles to fill 7-tile rack
+2. Player drags tiles to lanes to form words
+3. Dictionary validates words on "End Turn"
+4. Valid words set lane ownership and deal damage
+5. AI takes turn (finds words, steals lanes)
+6. Repeat until someone's health reaches 0
+
+### Lane System
+- 3 lanes visible at a time
+- Empty lanes appear as new ones fill
+- Owned lanes deal damage equal to word length + modifiers
+- "Stealing" a lane requires forming a new word using ALL existing letters plus more
+
+### Damage Calculation
+```
+base_damage = word_length
+relic_mult = product of all relic multipliers
+vulnerability_mult = enemy weakness multiplier
+final_damage = base_damage * relic_mult * vulnerability_mult
+```
+
+### Powered Tiles
+- **Ice (Shield)**: +1 max health when word accepted
+- **Flower (Heal)**: +1 health when word accepted  
+- **Gold (Meteor)**: +1 damage to enemy when word accepted
+
+## 8. Comment Markers
+Use these for inline knowledge that can be grep'd:
+- `AIDEV-NOTE:` - Important implementation notes
+- `AIDEV-TODO:` - Things to implement later
+- `AIDEV-QUESTION:` - Unclear requirements
+
+REMEMBER: This is a word game, not an action game. Focus on clear UI, satisfying drag-and-drop, and readable word displays. The cozy aesthetic should make players want to relax and play "just one more round."

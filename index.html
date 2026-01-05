@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Battle</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Main game canvas (for lanes, enemy, backgrounds) -->
+        <canvas id="game-canvas"></canvas>
+        
+        <!-- UI Overlay Layer -->
+        <div id="ui-layer">
+            <!-- Top bar with menu button and gold display -->
+            <div id="top-bar">
+                <button id="menu-btn" class="ui-button">Menu</button>
+                <div id="gold-display">
+                    <span id="gold-icon">💰</span>
+                    <span id="gold-amount">0</span>
+                </div>
+            </div>
+            
+            <!-- Health bars - player on left, enemy on right -->
+            <div id="player-health" class="health-bar-container left">
+                <div class="health-bar-label">You</div>
+                <div class="health-bar">
+                    <div class="health-bar-fill player"></div>
+                    <span class="health-text">30/30</span>
+                </div>
+                <!-- Active relics display below player health -->
+                <div id="active-relics" class="active-relics"></div>
+            </div>
+            
+            <div id="enemy-health" class="health-bar-container right">
+                <div class="health-bar-label">Enemy</div>
+                <div class="health-bar">
+                    <div class="health-bar-fill enemy"></div>
+                    <span class="health-text">30/30</span>
+                </div>
+            </div>
+            
+            <!-- Action buttons at bottom -->
+            <div id="action-bar">
+                <button id="restart-btn" class="ui-button">Restart Turn</button>
+                <button id="mulligan-btn" class="ui-button">Mulligan (3)</button>
+                <button id="end-turn-btn" class="ui-button primary">End Turn</button>
+            </div>
+        </div>
+        
+        <!-- Modal screens (hidden by default) -->
+        <div id="menu-screen" class="modal-screen hidden">
+            <div class="modal-content">
+                <h2>Menu</h2>
+                <button class="ui-button" id="resume-btn">Resume</button>
+                <button class="ui-button" id="settings-btn">Settings</button>
+                <button class="ui-button" id="quit-btn">Quit to Title</button>
+            </div>
+        </div>
+        
+        <div id="enemy-select-screen" class="modal-screen hidden">
+            <div class="modal-content wide">
+                <h2>Choose Your Opponent</h2>
+                <div id="enemy-options" class="selection-grid">
+                    <!-- Enemy cards populated by JS -->
+                </div>
+            </div>
+        </div>
+        
+        <div id="relic-select-screen" class="modal-screen hidden">
+            <div class="modal-content wide">
+                <h2>Choose a Relic</h2>
+                <div id="relic-options" class="selection-grid">
+                    <!-- Relic cards populated by JS -->
+                </div>
+            </div>
+        </div>
+        
+        <div id="reward-screen" class="modal-screen hidden">
+            <div class="modal-content">
+                <h2>Victory!</h2>
+                <div id="reward-display">
+                    <!-- Rewards populated by JS -->
+                </div>
+                <button class="ui-button primary" id="claim-rewards-btn">Claim Rewards</button>
+            </div>
+        </div>
+        
+        <div id="end-screen" class="modal-screen hidden">
+            <div class="modal-content">
+                <h2 id="end-title">Game Over</h2>
+                <p id="end-message"></p>
+                <button class="ui-button" id="continue-btn">Continue</button>
+                <button class="ui-button" id="new-game-btn">New Game</button>
+            </div>
+        </div>
+        
+        <div id="mulligan-modal" class="modal-screen hidden">
+            <div class="modal-content">
+                <h2>Select Tiles to Discard</h2>
+                <div id="mulligan-tiles" class="tile-selection">
+                    <!-- Tiles populated by JS -->
+                </div>
+                <div class="modal-buttons">
+                    <button class="ui-button" id="mulligan-confirm-btn" disabled>Mulligan</button>
+                    <button class="ui-button" id="mulligan-cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Turn indicator -->
+        <div id="turn-indicator" class="hidden">
+            <span id="turn-text">Your Turn</span>
+        </div>
+        
+        <!-- Loading screen -->
+        <div id="loading-screen">
+            <div class="loading-content">
+                <h1>Word Battle</h1>
+                <div class="loading-bar">
+                    <div class="loading-fill"></div>
+                </div>
+                <p id="loading-status">Loading assets...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game scripts -->
+    <script type="module" src="src/game.js?v=2"></script>
+</body>
+</html>
+
